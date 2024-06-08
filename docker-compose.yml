@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword        # Установите пароль для пользователя root
+      MYSQL_DATABASE: autoservice              # Имя создаваемой базы данных
+      MYSQL_USER: autoservice_user             # Имя пользователя базы данных
+      MYSQL_PASSWORD: autoservice_password     # Пароль для пользователя базы данных
+    volumes:
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    image: autoservice-backend-app
+    container_name: autoservice-backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_USER=autoservice_user
+      - DB_PASSWORD=autoservice_password
+      - DB_NAME=autoservice
+
+volumes:
+  db_data:

@@ -24,7 +24,17 @@ func CreateAppointment(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, models.ErrorResponse{Error: err.Error()})
 		return
 	}
-	internal.DB.Create(&input)
+
+	// Если `AppointmentDate` не задано, установите текущее время
+	if input.AppointmentDate.IsZero() {
+		input.AppointmentDate = time.Now() // или любое другое значение по умолчанию
+	}
+
+	if err := internal.DB.Create(&input).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, models.SuccessResponse{Data: input})
 }
 
@@ -38,7 +48,13 @@ func CreateAppointment(c *gin.Context) {
 // @Router /api/admin/appointments [get]
 func GetAppointments(c *gin.Context) {
 	var appointments []models.Appointment
-	internal.DB.Preload("Client").Preload("Employee").Preload("Service").Find(&appointments)
+
+	// Запрос всех записей из базы данных
+	if err := internal.DB.Find(&appointments).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, models.ErrorResponse{Error: err.Error()})
+		return
+	}
+
 	c.JSON(http.StatusOK, models.SuccessResponse{Data: appointments})
 }
 

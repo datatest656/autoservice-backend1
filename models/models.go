@@ -20,7 +20,7 @@ type Appointment struct {
 	ClientID        uint      `json:"client_id" example:"1"`
 	EmployeeID      uint      `json:"employee_id" example:"1"`
 	ServiceID       uint      `json:"service_id" example:"1"`
-	AppointmentDate time.Time `json:"appointment_date" example:"2024-06-08T12:00:00Z"`
+	AppointmentDate time.Time `json:"appointment_date" example:"2024-06-08T12:00:00Z"` // убедитесь, что тип time.Time используется для хранения даты
 	Status          string    `json:"status" example:"Scheduled"`
 	CreatedAt       time.Time `json:"created_at"`
 }
