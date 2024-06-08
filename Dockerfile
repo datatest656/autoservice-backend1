@@ -1,25 +1,32 @@
-# База данных stage
-FROM mysql:8.0 AS db
-ENV MYSQL_ROOT_PASSWORD=rootpassword
-ENV MYSQL_DATABASE=autoservice
-ENV MYSQL_USER=autoservice_user
-ENV MYSQL_PASSWORD=autoservice_password
-COPY ./init.sql /docker-entrypoint-initdb.d/
-RUN chmod -R 644 /docker-entrypoint-initdb.d/*
+# Используем официальный образ Golang
+FROM golang:1.22-alpine as builder
 
-# Сборка stage
-FROM golang:1.22-alpine AS builder
+# Устанавливаем рабочую директорию внутри контейнера
 WORKDIR /app
-COPY . .
-RUN go mod tidy
-RUN go build -o autoservice-backend
 
-# Финальная stage
+# Копируем все файлы в рабочую директорию
+COPY . .
+
+# Скачиваем зависимости
+RUN go mod download
+
+# Сборка приложения
+RUN go build -o /autoservice-backend
+
+# Используем минимальный образ для запуска
 FROM alpine:latest
-WORKDIR /root/
-COPY --from=builder /app/autoservice-backend .
-COPY --from=db /docker-entrypoint-initdb.d /docker-entrypoint-initdb.d
+
+# Копируем скомпилированное приложение из builder stage
+COPY --from=builder /autoservice-backend /autoservice-backend
+
+# Устанавливаем права на выполнение
+RUN chmod +x /autoservice-backend
+
+# Устанавливаем рабочую директорию
+WORKDIR /
+
+# Открываем порт 8080
 EXPOSE 8080
 
-# Команда для запуска базы данных и приложения
-CMD ["sh", "-c", "docker-entrypoint.sh mysqld & ./autoservice-backend"]
+# Указываем команду для запуска приложения
+CMD ["/autoservice-backend"]
