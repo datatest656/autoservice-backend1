@@ -5,10 +5,10 @@ services:
     image: mysql:8.0
     container_name: mysql-container
     environment:
-      MYSQL_ROOT_PASSWORD: rootpassword        # Установите пароль для пользователя root
-      MYSQL_DATABASE: autoservice              # Имя создаваемой базы данных
-      MYSQL_USER: autoservice_user             # Имя пользователя базы данных
-      MYSQL_PASSWORD: autoservice_password     # Пароль для пользователя базы данных
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: autoservice
+      MYSQL_USER: autoservice_user
+      MYSQL_PASSWORD: autoservice_password
     volumes:
       - db_data:/var/lib/mysql
     ports:
