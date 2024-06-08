@@ -1,32 +1,13 @@
-# Используем официальный образ Golang
-FROM golang:1.22-alpine as builder
-
-# Устанавливаем рабочую директорию внутри контейнера
+# Stage 1: Build the Go application
+FROM golang:1.22-alpine AS builder
 WORKDIR /app
-
-# Копируем все файлы в рабочую директорию
 COPY . .
-
-# Скачиваем зависимости
 RUN go mod download
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o autoservice-backend .
 
-# Сборка приложения
-RUN go build -o /autoservice-backend
-
-# Используем минимальный образ для запуска
+# Stage 2: Create the final image
 FROM alpine:latest
-
-# Копируем скомпилированное приложение из builder stage
-COPY --from=builder /autoservice-backend /autoservice-backend
-
-# Устанавливаем права на выполнение
-RUN chmod +x /autoservice-backend
-
-# Устанавливаем рабочую директорию
-WORKDIR /
-
-# Открываем порт 8080
+WORKDIR /root/
+COPY --from=builder /app/autoservice-backend .
 EXPOSE 8080
-
-# Указываем команду для запуска приложения
-CMD ["/autoservice-backend"]
+CMD ["./autoservice-backend"]
