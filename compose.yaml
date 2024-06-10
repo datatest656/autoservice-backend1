@@ -1,4 +1,4 @@
-version: '3.8'
+version: '3.9'  # Обновленная версия
 
 services:
   db:
@@ -36,8 +36,6 @@ services:
       DB_USER: autoservice_user
       DB_PASSWORD: autoservice_password
       DB_NAME: autoservice
-    entrypoint: /bin/sh -c "sleep 20 && ./autoservice-backend"  # Задержка 20 секунд
-
 
 volumes:
   db_data:
