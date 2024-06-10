@@ -20,6 +20,8 @@ func ConnectDatabase() {
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_NAME"))
 
+	log.Println("Connecting to database with DSN:", dsn)
+
 	var err error
 	DB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 
@@ -28,6 +30,7 @@ func ConnectDatabase() {
 	}
 
 	log.Println("Database connection established successfully")
+
 	// Автоматическая миграция моделей
 	err = DB.AutoMigrate(
 		&models.Client{},

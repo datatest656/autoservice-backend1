@@ -77,5 +77,6 @@ type Service struct {
 	Name        string    `json:"name" example:"Oil Change"`
 	Description string    `json:"description" example:"Full oil change service"`
 	Price       float64   `json:"price" example:"49.99"`
+	ImageURL    string    `json:"image_url" example:"http://example.com/image.jpg"` // Новое поле для URL изображения
 	CreatedAt   time.Time `json:"created_at"`
 }
