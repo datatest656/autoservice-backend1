@@ -11,9 +11,9 @@ func SetupRouter() *gin.Engine {
 
 	// Добавьте CORS Middleware
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"}, // Разрешите доступ с вашего фронтенда
+		AllowOrigins:     []string{"http://localhost:3000", "http://51.20.253.114"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		AllowHeaders:     []string{"Origin", "Content-Type"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
